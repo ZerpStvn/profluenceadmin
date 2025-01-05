@@ -2,22 +2,20 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:profluenceadmin/controller/otp.dart';
-import 'package:profluenceadmin/controller/otpverify.dart';
 import 'package:profluenceadmin/nav.dart';
 
-class Adminaccess extends StatefulWidget {
-  const Adminaccess({super.key});
+class Otpadmincheck extends StatefulWidget {
+  const Otpadmincheck({super.key});
 
   @override
-  State<Adminaccess> createState() => _AdminaccessState();
+  State<Otpadmincheck> createState() => _OtpadmincheckState();
 }
 
-class _AdminaccessState extends State<Adminaccess> {
+class _OtpadmincheckState extends State<Otpadmincheck> {
   final TextEditingController _accesscode = TextEditingController();
   String error = "";
   bool loading = false;
-  final sendotp = EmailServiceVer();
+
   @override
   void dispose() {
     _accesscode.dispose();
@@ -31,21 +29,17 @@ class _AdminaccessState extends State<Adminaccess> {
   }
 
   Future<void> getAccessCode() async {
-    String otpcode = generateRandomOTP().toString();
     setState(() {
       loading = true;
     });
     try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('admin')
-          .doc('GQtgEKPgYpePmZqgqhu9NaTF5Nq2')
-          .collection('accesscode')
-          .get();
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('otp').get();
 
       bool isValid = false;
 
       for (var doc in snapshot.docs) {
-        var accessCodeFromFirestore = doc['code'];
+        var accessCodeFromFirestore = doc['otp'];
         if (_accesscode.text == accessCodeFromFirestore) {
           isValid = true;
           break;
@@ -57,19 +51,11 @@ class _AdminaccessState extends State<Adminaccess> {
         setState(() {
           loading = false;
         });
-        await FirebaseFirestore.instance
-            .collection('otp')
-            .add({"otp": otpcode}).then((value) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const Otpadmincheck()),
-            (Route<dynamic> route) => false,
-          );
-        });
-        sendotp.sendMailVerified(
-            recipientEmail: "comiccrawn@gmail.com",
-            message: "Your OTP code - $otpcode ",
-            subject: "");
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const SideNavigation()),
+          (Route<dynamic> route) => false,
+        );
       } else {
         setState(() {
           error = "No access match, please try again.";
@@ -102,14 +88,14 @@ class _AdminaccessState extends State<Adminaccess> {
               color: Colors.white,
               child: SizedBox(
                 width: 300,
-                height: 240,
+                height: 250,
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
                     child: Column(
                       children: [
                         const Text(
-                          'Enter Your Admin Code',
+                          'One Time Code sent to your email',
                           style: TextStyle(fontSize: 20, color: Colors.black),
                         ),
                         const SizedBox(height: 20),
@@ -117,7 +103,7 @@ class _AdminaccessState extends State<Adminaccess> {
                           controller: _accesscode,
                           style: const TextStyle(color: Colors.black),
                           decoration: InputDecoration(
-                            hintText: 'Enter Access Code',
+                            hintText: 'Enter 6 diget code',
                             hintStyle: const TextStyle(color: Colors.black),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -163,18 +149,6 @@ class _AdminaccessState extends State<Adminaccess> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class NextPage extends StatelessWidget {
-  const NextPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Next Page')),
-      body: const Center(child: Text('You have successfully logged in!')),
     );
   }
 }

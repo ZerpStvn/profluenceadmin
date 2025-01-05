@@ -3,7 +3,9 @@ import 'package:profluenceadmin/Management.dart';
 import 'package:profluenceadmin/ban.dart';
 import 'package:profluenceadmin/controller/admin.dart';
 import 'package:profluenceadmin/controller/adminaccess.dart';
+import 'package:profluenceadmin/controller/enrolledusers.dart';
 import 'package:profluenceadmin/mainpage.dart';
+import 'package:profluenceadmin/reportlogs.dart';
 
 class SideNavigation extends StatefulWidget {
   const SideNavigation({super.key});
@@ -13,7 +15,7 @@ class SideNavigation extends StatefulWidget {
 }
 
 class _SideNavigationState extends State<SideNavigation> {
-  int page = 0;
+  int page = 5;
 
   Widget pagedefault() {
     if (page == 0) {
@@ -24,6 +26,10 @@ class _SideNavigationState extends State<SideNavigation> {
       return const BanUser();
     } else if (page == 3) {
       return const GenerateAccessCode();
+    } else if (page == 4) {
+      return const Repostlogs();
+    } else if (page == 5) {
+      return const Enrolledusers();
     } else {
       return const Mainpage();
     }
@@ -119,6 +125,46 @@ class _SideNavigationState extends State<SideNavigation> {
                     ),
                     title: const Text(
                       "Ban Users",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ListTile(
+                    onTap: () {
+                      setState(() {
+                        page = 5;
+                      });
+                      debugPrint("$page");
+                    },
+                    leading: const Icon(
+                      Icons.person_2_outlined,
+                      size: 46,
+                      color: Colors.white,
+                    ),
+                    title: const Text(
+                      "Enrolled Users",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ListTile(
+                    onTap: () {
+                      setState(() {
+                        page = 4;
+                      });
+                      debugPrint("$page");
+                    },
+                    leading: const Icon(
+                      Icons.report_outlined,
+                      size: 46,
+                      color: Colors.white,
+                    ),
+                    title: const Text(
+                      "Report logs",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
